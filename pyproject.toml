@@ -1,0 +1,16 @@
+[project]
+name = "dance-studio-manager"
+version = "0.1.0"
+description = "EX1 - FastAPI backend for Dance Studio Manager"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest",
+    "fastapi",
+    "uvicorn",
+    "pydantic"
+]
