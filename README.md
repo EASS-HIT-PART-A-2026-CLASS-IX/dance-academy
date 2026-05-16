@@ -43,3 +43,11 @@ dance-academy/
 │
 ├── interface/
 │   ├── app.py         # Streamlit UI
+│   └── api.py         # API communication layer
+│
+├── tests/
+│   └── test_routines.py
+│
+├── pyproject.toml
+├── README.md
+└── .venv/
