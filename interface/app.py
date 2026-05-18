@@ -1,4 +1,5 @@
 import streamlit as st
+import requests
 from api import get_routines, add_routine, delete_routine
 
 st.set_page_config(page_title="Dance Academy", layout="centered")
@@ -13,7 +14,7 @@ if st.button("🔄 Refresh routines"):
     st.rerun()
 
 # =========================
-# Summary Statistics
+# Summary Statistics (LOCAL)
 # =========================
 st.subheader("📊 Summary")
 
@@ -37,7 +38,63 @@ except Exception:
 st.divider()
 
 # =========================
-# List Routines (עם עיצוב יפה)
+# External Stats Service (IMPROVED ✅)
+# =========================
+st.subheader("🌐 External Stats Service")
+
+if st.button("Load external stats"):
+    try:
+        response = requests.get("http://127.0.0.1:8000/external-stats")
+        data = response.json()
+
+        st.success("✅ Stats loaded from external service")
+
+        col1, col2 = st.columns(2)
+
+        col1.metric(
+            "Total routines (external)",
+            data["total_routines"]
+        )
+
+        col2.metric(
+            "Average difficulty (external)",
+            round(data["average_difficulty"], 2)
+        )
+
+    except Exception as e:
+        st.error(f"Error loading stats: {e}")
+
+st.divider()
+
+# =========================
+# Recommendation UI (IMPROVED ✅)
+# =========================
+st.subheader("🎯 Get Recommendation")
+
+difficulty_choice = st.slider("Choose difficulty", 1, 5)
+
+if st.button("Get Recommendation"):
+    try:
+        response = requests.get(
+            f"http://127.0.0.1:8000/recommendations?difficulty={difficulty_choice}"
+        )
+
+        result = response.json()
+
+        st.success("✅ Recommendation loaded")
+
+        st.markdown("### 💃 Recommended routines")
+
+        for rec in result["recommendations"]:
+            st.markdown(f"- ✅ **{rec}**")
+
+    except Exception as e:
+        st.error(f"Error: {e}")
+
+st.divider()
+
+# =========================
+# List Routines
 # =========================
 st.subheader("📋 Routines")
 
@@ -53,7 +110,6 @@ try:
                 st.write(f"**Song:** {routine['song_name']}")
                 st.write(f"**Description:** {routine['description']}")
 
-                # ✅ Delete button
                 if st.button(f"❌ Delete routine {routine['id']}", key=routine["id"]):
                     try:
                         delete_routine(routine["id"])

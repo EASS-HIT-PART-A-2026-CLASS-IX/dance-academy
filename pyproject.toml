@@ -5,6 +5,7 @@ description = "EX1 - FastAPI backend for Dance Studio Manager"
 requires-python = ">=3.12"
 dependencies = [
     "httpx>=0.28.1",
+    "requests>=2.34.2",
 ]
 
 [tool.uv]

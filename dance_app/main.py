@@ -1,10 +1,15 @@
 from fastapi import FastAPI, HTTPException
+import requests
 from .repository import DanceRoutineRepository
 from .schemas import DanceRoutine, DanceRoutineCreate
 
 app = FastAPI(title="Dance Studio Manager – EX1")
 
 repo = DanceRoutineRepository()
+
+# ------------------------------
+# ROUTINES ENDPOINTS
+# ------------------------------
 
 @app.get("/routines", response_model=list[DanceRoutine])
 def list_routines():
@@ -34,3 +39,33 @@ def delete_routine(routine_id: int):
     if not deleted:
         raise HTTPException(status_code=404, detail="Routine not found")
     return {"ok": True}
+
+# ------------------------------
+# RECOMMENDATION SERVICE
+# ------------------------------
+
+def get_recommendations_from_service(difficulty: int):
+    response = requests.get(
+        f"http://127.0.0.1:8001/recommend?difficulty={difficulty}"
+    )
+    return response.json()
+
+
+@app.get("/recommendations")
+def recommendations(difficulty: int):
+    return get_recommendations_from_service(difficulty)
+
+# ------------------------------
+# STATS SERVICE
+# ------------------------------
+
+def get_stats_from_service():
+    response = requests.get(
+        "http://127.0.0.1:8002/stats"
+    )
+    return response.json()
+
+
+@app.get("/external-stats")
+def external_stats():
+    return get_stats_from_service()
